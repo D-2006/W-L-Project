@@ -1,0 +1,50 @@
+mkdir data
+
+cd \data
+
+mkdir directie
+mkdir administratie	
+ls
+new-smbshare directie -path c:\data\directie
+new-smbshare administratie -path c:\data\administratie
+
+check door bestande \\local
+
+hostname
+sconfig
+2
+name invullen (powershell)
+restarten nee
+9
+tijd aanpasen
+8
+1
+1
+S
+172.16.10.10 (ip wat jij kiest)
+255.255.0.0
+172.16.10.10 (ip wat jij kiest) 
+
+cd
+
+Install-WindowsFeature -name AD-Domain-Services, DNS -includemanagementTools
+get-WindowsFeature
+Install-ADDSForest -DomainName "Powershell.dc" -InstallDNS
+-DomainNetbiosbiosname powershell2
+
+New-ADOrganizationalUnit -Name "powershell" -Path "DC=Powershell,DC=dc"
+New-ADOrganizationalUnit -Name "administratie" -Path "OU=powershell,DC=Powershell,DC=dc"
+New-ADGroup -name administratie -path "OU=administratie,DC=powershell,DC=powershell,DC=dc"
+1
+New-ADUser Piet -Path "OU=administratie,DC=powershell,DC=powershell,DC=dc"
+Add-ADGroupMember -identiry administratie -Members "Piet wind" "OU=administratie,DC=powershell,DC=powershell,DC=dc"
+
+
+
+icacls "c:\data\administratie" /grant "administratie:(OI)(CI)M"               (als je geen Modifi wil maar Read, verander M naar RX)
+icacls "c:\data\administratie" /inheritance:d
+icacls "c:\data\administratie" /remove "Users"
+New-Smbshare administratie -Path c:\data\administratie -ChangeAcces Everyone       (als die fout gaat doe Remove-Smbshare)
+
+Add-Computer -DomainName "examenserver.com" -Credential (Get-Credential) -Restart            (Powershell server verbinden met Windows server)
+Windows gegevens invoeren
